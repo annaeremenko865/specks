@@ -1,190 +1,248 @@
-'use script';
-                  
-let we = 0;                    
-let read;
-read = require('readline-sync');
-let Table = require('easy-table');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style type="text/css">
+    	body {
+    		background: #e9967a;
+    		}
+		#can {
+			margin-top: 90px;
+			
+			}
+    </style>
+</head>
+<body >
+	<canvas id = "can"></canvas>
+  <script>
+let can = document.getElementById("can");
+let b = document.createElement('button');
+let bt = document.createTextNode('Push the button to start the game!')
+b.appendChild(bt);
+document.body.insertBefore(b, can);
+b.style.float = 'left';
+b.style.width= '300px';
+b.style.height = '70px';
+b.style.font = '25px impact';
+b.style.color = 'green';
+b.style.background = '#F0E68C';
+b.style.border = 'solid 2 px green;';
+b.style.borderRadius = '7px';
+b.style.position = 'fixed';
+ b.style.boxShadow = '0 0 30px rgba(0, 0, 0, 0.4)';
 
-let question_list = [       
+b.addEventListener('click', start);
+window.addEventListener('load', specks);
 
-    {
-        question: 'What programming language do you learn in the courses?',
-        answers: [
-            'Java', 'JavaScript', 'C++'
-        ],
-        correct: [2],
-        weight: 3
-    },
-    {
-        question: 'What days do you have courses for?',
-        answers: [
-            'Monday', 'Wednesday', 'Friday'
-        ],
-        correct: [2, 3],
-        weight: 4
-    },
-    {
-        question: 'From what month does the course take place?',
-        answers: [
-            'November', 'December', 'February'
-        ],
-        correct: [1, 3],
-        weight: 4
-    },
-    {
-        question: 'How many people are in your group?',
-        answers: [
-            '13', '21', '25'
-        ],
-        correct: [1],
-        weight: 3
-    }
-
-];
-let w = Array(question_list.length);            
-let attempts = Array(question_list.length);     
-let skip = Array(question_list.length);         
-for(let i = 0; i < question_list.length; i++) {
-    w[i] = 0;
-    attempts[i] = 0;
-    we = we + question_list[i].weight;
-};
-
-function Exam(list) {
-let j;
-let n = 1;                     
-let iq = 0;                    
-let k = 0;                     
-let is = 0;     
-let finish = false;            
-let first_pass = true;         
-let outputs = []; 
-     this.start = function() {             
-                 if (finish === true) {       
-                   return;                 
-                 };
-                 iq = n - 1;
-                 console.log('('+ n + '/' + question_list.length + ') ' + list[iq].question);  
-                 for(let i = 0; i < 3; i++) {
-                   j = i + 1;
-                   console.log(j + ') ' + list[iq].answers[i]);
-                 };
-                 console.log('s) <Skip>');
-                 console.log('f) <Finish>');
-                 outputs[iq] = read.question('');  
-                this.check_answers();       
-                 if (first_pass) {              
-                   if (iq === (question_list.length - 1)) {              
-                      if (k > 0) {   
-                       first_pass = false;         
-                       is = 0;
-                        n = skip[is];
-                        this.start();
-                       };
-                     return;                
-                   };    
-                   if (iq < (question_list.length - 1)) {
-                     is++;
-                     n++;
-                     this.start();
-                   };
-                 };                          
-                 if (!first_pass) {           
-                   if (is < (k - 1)) {
-                     is++;
-                     if (skip[is] !== undefined) {         
-                       n = skip[is];
-                       this.start();
-                     };
-                   };
-                   if ( is < k + 1){
-                    is = 0;
-                     while (skip[is] === undefined) {
-                     is++;
-                     if (is > k) {
-                       return;
-                     };
-                     };            
-                    n = skip[is];
-                    this.start();
-                   }
-                   if (k === 0) {
-                     return;
-                   };
-                 };        
-     };                                   
-          this.check_answers = function() {   
-          correct = list[iq].correct.join(',');
-                 if (outputs[iq] ==='f') {
-                   finish = true;
-                   return;
-                 }; 
-                 if (outputs[iq] === 's') {
-                   attempts[iq]++;              
-                   if (first_pass) {             
-                     skip[k] = iq + 1;   
-                     if (k < question_list.length) {
-                       k++;
-                     };
-                   };
-                   return;                      
-                 };                             
-                if (outputs[iq].search(/\d\,\s\d/) === 0){
-          outputs[iq] = outputs[iq].replace(/\,\s/, ',')
-        }else {if (outputs[iq].search(/\d\s\d/) === 0){
-            outputs[iq] = outputs[iq].replace(/\s/, ',')
-               }
-        }
-                 if(outputs[iq] === correct) {
-                   w[iq] = list[iq].weight;
-                 };
-                   attempts[iq]++;             
-                   if (!first_pass) {
-                     delete skip[is];     
-                              if (is === (k - 1)) {
-                                k = k - 1;
-                              };
-                            return;
-                   };
-                 return;
-      }; 
- this.format_as_table = function(){
-  let sum = 0;                  
-  let rate = 0;   
-  let ca = 0; 
-  let t = new Table;
-    for (iq = 0; iq <= (question_list.length - 1); iq++){
-      if (list[iq].question.length > 34){
-      list[iq].question = list[iq].question.slice(0, 31) + '...?';  
-      }
-  let data = [
-          { q: (iq + 1) + ') ' + list[iq].question, a:  '  ' + outputs[iq] , cA: '     ' + list[iq].correct, w: '  ' + w[iq], at: '   ' + attempts[iq]},
-        ]
-      data.forEach(function(test) {
-        t.cell('              Question', test.q)
-      t.cell('Answer', test.a)
-      t.cell('Correct answer', test.cA)
-        t.cell('Weight',test.w)
-        t.cell('Attempts',test.at)
-        t.newRow()
-       })
-    }
-console.log(t.toString());
-
-for(let i = 0; i < question_list.length; i++) {
-    sum = sum + w[i];             
-    if (w[i] > 0) {
-      ca++;                     
-    };
-};
-rate = Math.floor(sum / we * 100);
-console.log('\n');
-console.log('Correct answers: ' + ca);
-console.log('Sum: ' + sum);
-console.log('Rate: ' + rate + ' %');
+let ctx;
+let width = 320;
+let height = 320;
+let cells = [[],[],[],[]] ;
+let rightSpecks = [[1,  2,  3,  4 ],
+      			 [5,  6,  7,  8 ],
+      			 [9,  10, 11, 12],
+       			[13, 14, 15, 0 ] ] ;
+let randomMas= [];
+let count;
+let moveCount = 0;
+let bingo = false;
+ 
+function specks(){
+ can.width = width;
+ can.height = height;
+ ctx = can.getContext("2d");
+ ctx.fillStyle="#1b796e";
+ ctx.fillRect(0, 0, width, height, 20);
+ for (let j = 0; j < 4; j++){
+  for (let i = 0; i < 4; i++){
+   cells[i][j] = new Cell();
+   cells[i][j].i = i;
+   cells[i][j].j = j;
+   cells[i][j].x = 6 + i * 70 + 8 * i;
+   cells[i][j].y = 6 + j * 70 + 8 * j;
+   cells[i][j].addCell();
+   cells[i][j].setText(rightSpecks[j][i]); 
+  }
+ }
+ cells[3][3].clearCell();
 }
-};  
 
-let exam = new Exam(question_list);
-exam.start();
-let output = exam.format_as_table();
+function start(){
+ can.width = width;
+ can.height = height;
+ ctx = can.getContext("2d");
+ 
+ game();
+    
+ can.addEventListener("click", prepareToMove);
+}
+
+let Cell = function(){
+ this.i = 0;
+ this.j = 0;
+ this.x = 0;
+ this.y = 0;
+ this.number = 0;
+ this.addCell = function(){
+  ctx.fillStyle = "#e0eeee";
+  ctx.fillRect(this.x, this.y, 70, 70, 20);
+ }
+ this.setText = function(text){
+  with (ctx){
+   font = '20pt tahoma';
+   textBaseline = 'top';
+   textAlign = 'center';
+   fillStyle = '#000';
+   fillText(text, this.x + 35, this.y + 20);
+  }
+ }
+  
+ this.clearCell = function(){
+  ctx.fillStyle = "#c1cdcd";
+  ctx.fillRect(this.x, this.y, 70, 70, 20);
+  }
+}
+ 
+function prepareToMove(e){
+  
+ for (let j = 0; j < 4; j++ ) {
+    for (let i = 0; i < 4; i++ ) {
+ if (cells[i][j].x + 70 > e.offsetX && cells[i][j].x < e.offsetX &&
+    cells[i][j].y + 70 > e.offsetY && cells[i][j].y < e.offsetY ) 
+ 	 move(cells[i][j]);
+ }}
+}
+ 
+ function move(e) {
+    let currNumber = e.number;  
+    if (currNumber != 0 && !bingo) {   
+   	let i = e.i;    
+   	let j = e.j;
+   	let endMove = false;   
+          
+   for (let k = 0; k < 4; k++ ) {  
+     switch(k) {
+      case 0 :{ 
+      if (i + 1 < 4 && cells[i + 1][j].number === 0) {   
+       cells[i + 1][j].addCell();   
+       cells[i + 1][j].setText(e.number); 
+       cells[i + 1][j].number = currNumber;  
+       endMove = true;   
+       };
+      break;
+      }
+      case 1 :{ 
+       if (j + 1 < 4 && cells[i][j + 1].number === 0) {
+        cells[i][j + 1].addCell();
+        cells[i][j + 1].setText(e.number);
+        cells[i][j + 1].number = currNumber;
+       endMove = true;
+       };
+      break;
+      }
+      case 2 :{ 
+      if (i - 1 > -1 && cells[i - 1][j].number === 0) {
+       cells[i - 1][j].addCell();
+       cells[i - 1][j].setText(e.number);
+       cells[i - 1][j].number = currNumber;
+       endMove = true;
+       };
+      break;
+      }
+      case 3 :{ 
+       if (j - 1 > -1 && cells[i][j - 1].number === 0) {
+        cells[i][j - 1].addCell();
+        cells[i][j - 1].setText(e.number);
+        cells[i][j - 1].number = currNumber;
+       endMove = true;
+       };
+      break;
+      }
+     }
+     if (endMove) { 
+      cells[i][j].number = 0;  
+      e.clearCell();
+      moveCount++;   
+     break; 
+     }
+    }
+   }
+  }
+  
+function game(){
+ ctx.fillStyle = "#1b796e";
+ ctx.fillRect(0, 0, width, height, 20);
+ setCells();
+}
+
+function setCells(){
+ for (let j = 0; j < 4; j++){
+  for (let i = 0; i < 4; i++){
+   cells[i][j] = new Cell();
+   cells[i][j].i = i;
+   cells[i][j].j = j;
+   cells[i][j].x = 6 + i * 70 + 8 * i;
+   cells[i][j].y = 6 + j * 70 + 8 * j;
+  }
+ }
+  newGame();
+}
+
+  function newGame() {
+   bingo = false;  
+   moveCount = 0; 
+   let tempcount = 0;  
+   random();    
+   for (let j = 0; j < 4; j++ ) { 
+    for (let i = 0; i < 4; i++ ) {
+     cells[i][j].addCell();
+     cells[i][j].setText(randomMas[tempcount]); 
+     cells[i][j].number = randomMas[tempcount];
+     tempcount++;
+    }
+  }
+    cells[3][3].clearCell(); 
+ cells[3][3].number = 0;
+  }
+
+  function random() {
+   let flag = true;
+   let temp = 0;
+   let count = 0;
+   for (let k = 0; k < 16; k++ ) {randomMas[k] = 0};
+     
+   for (let j = 0; j < 15; j++ ) { 
+    while (flag) {    
+     if (count === 15) break;
+     temp = Math.round(15 * Math.random() + 1);
+     flag = false;
+     for (let i = 0; i < 16; i++ ) {  
+      if (randomMas[i] === temp || temp === 16) { flag = true; break; }
+     }
+    }
+    randomMas[j] = temp;
+    count++;
+    flag = true;
+   }
+  }
+ 
+CanvasRenderingContext2D.prototype.fillRect = fillRect;
+
+function fillRect(x, y, w, h, r){
+this.beginPath();
+this.moveTo(x + r, y);
+this.lineTo(x + w - r, y);
+this.quadraticCurveTo(x + w, y, x + w, y + r);
+this.lineTo(x + w, y + h - r);
+this.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+this.lineTo(x + r, y + h);
+this.quadraticCurveTo(x, y + h, x, y + h - r);
+this.lineTo(x, y + r);
+this.quadraticCurveTo(x, y, x + r, y);
+this.fill();
+}
+</script>
+</body>
+</html>
+	
